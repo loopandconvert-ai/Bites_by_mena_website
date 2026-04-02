@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <!-- Background: transparent so it adapts to any page background -->
+  <rect width="800" height="800" fill="transparent"/>
+
+  <!-- "Bites" text -->
+  <text x="44" y="330"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="218"
+        font-weight="bold"
+        fill="#E07898"
+        letter-spacing="-4">Bites</text>
+
+  <!-- Cookie icon: outer circle -->
+  <circle cx="650" cy="190" r="88" fill="#F5C4A8" stroke="#E07898" stroke-width="11"/>
+
+  <!-- Cookie dots -->
+  <circle cx="618" cy="158" r="13" fill="#E07898"/>
+  <circle cx="665" cy="150" r="12" fill="#E07898"/>
+  <circle cx="700" cy="168" r="11" fill="#E07898"/>
+  <circle cx="604" cy="196" r="11" fill="#E07898"/>
+  <circle cx="643" cy="195" r="15" fill="#E07898"/>
+  <circle cx="685" cy="200" r="10" fill="#E07898"/>
+  <circle cx="628" cy="228" r="12" fill="#E07898"/>
+  <circle cx="667" cy="232" r="11" fill="#E07898"/>
+
+  <!-- "byMena" text -->
+  <text x="44" y="555"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="218"
+        font-weight="bold"
+        fill="#E07898"
+        letter-spacing="-4">byMena</text>
+</svg>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Bites by Mena</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.svg" alt="Bites by Mena" class="nav-logo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+        <div class="logo-text" style="display:none;">Bites by Mena<span>Homemade Cookies</span></div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+        <li class="nav-cta"><a href="order.html">Order Now</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <span class="section-tag">Let's talk cookies</span>
+      <h1 class="section-title">Get in Touch</h1>
+      <p>Questions, suggestions, or just want to say hi? I'd love to hear from you.</p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+
+        <!-- Left: Contact info -->
+        <div>
+          <span class="section-tag">Contact info</span>
+          <h2 class="section-title" style="font-size: 1.9rem; margin-bottom: 14px;">Reach out anytime</h2>
+          <p style="color: var(--text-muted); margin-bottom: 36px; font-size: 0.97rem;">
+            Whether you have a question about an order, want to suggest a new cookie flavour,
+            or just want to chat — I'm always happy to hear from you!
+          </p>
+
+          <div class="contact-card">
+            <div class="cc-icon">📧</div>
+            <div>
+              <h4>Email</h4>
+              <a href="mailto:hello@bitsbymena.nl">hello@bitsbymena.nl</a>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="cc-icon">📍</div>
+            <div>
+              <h4>Location</h4>
+              <p>The Netherlands</p>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="cc-icon">⏱️</div>
+            <div>
+              <h4>Response time</h4>
+              <p>Usually within 24 hours</p>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="cc-icon">🍪</div>
+            <div>
+              <h4>Want to order?</h4>
+              <a href="order.html">Go to the order page →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div class="contact-form">
+          <h3>Send a message</h3>
+
+          <form id="contactForm" onsubmit="submitContact(event)" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cfFirstName">First name *</label>
+                <input type="text" id="cfFirstName" name="firstName" placeholder="Your first name" required />
+              </div>
+              <div class="form-group">
+                <label for="cfLastName">Last name</label>
+                <input type="text" id="cfLastName" name="lastName" placeholder="Your last name" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cfEmail">Email address *</label>
+              <input type="email" id="cfEmail" name="email" placeholder="you@email.com" required />
+            </div>
+
+            <div class="form-group">
+              <label for="cfSubject">Subject</label>
+              <select id="cfSubject" name="subject">
+                <option value="">Choose a topic…</option>
+                <option value="order">Question about an order</option>
+                <option value="flavour">Suggest a new flavour</option>
+                <option value="allergy">Allergy / ingredient question</option>
+                <option value="collaboration">Collaboration or event</option>
+                <option value="other">Something else</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cfMessage">Your message *</label>
+              <textarea id="cfMessage" name="message" placeholder="What would you like to ask or share?" style="min-height: 130px;" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1rem; padding: 15px;">
+              Send Message
+            </button>
+            <p class="form-submit-note" style="margin-top: 12px;">
+              I'll get back to you within 24 hours. Promise! 🍪
+            </p>
+
+            <div class="form-success" id="contactSuccess">
+              ✉️ Message sent! Thank you for reaching out — I'll reply as soon as possible.
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-alt">
+    <div class="container section-center">
+      <span class="section-tag">Quick answers</span>
+      <h2 class="section-title">Frequently asked questions</h2>
+
+      <div style="max-width: 700px; margin: 48px auto 0; text-align: left;">
+
+        <details style="margin-bottom: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px;">
+          <summary style="font-weight: 600; cursor: pointer; font-size: 0.97rem; color: var(--text);">
+            How do I place an order?
+          </summary>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; line-height: 1.7;">
+            Head over to the <a href="order.html" style="color: var(--red);">Order page</a>, fill in your details and how many cookies you'd like. Mena will confirm your order by email within 24 hours.
+          </p>
+        </details>
+
+        <details style="margin-bottom: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px;">
+          <summary style="font-weight: 600; cursor: pointer; font-size: 0.97rem; color: var(--text);">
+            How far in advance should I order?
+          </summary>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; line-height: 1.7;">
+            Please order at least 2–3 days in advance to ensure your cookies are baked fresh and delivered on time. For large orders (30+), contact me first.
+          </p>
+        </details>
+
+        <details style="margin-bottom: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px;">
+          <summary style="font-weight: 600; cursor: pointer; font-size: 0.97rem; color: var(--text);">
+            Do you offer delivery?
+          </summary>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; line-height: 1.7;">
+            Yes! Both delivery and pickup are available. You can choose your preference when placing your order.
+          </p>
+        </details>
+
+        <details style="margin-bottom: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px;">
+          <summary style="font-weight: 600; cursor: pointer; font-size: 0.97rem; color: var(--text);">
+            Do you accommodate allergies?
+          </summary>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; line-height: 1.7;">
+            My cookies contain gluten, dairy, and eggs. If you have a specific allergy or dietary requirement, please mention it in your order notes or contact me directly so we can discuss options.
+          </p>
+        </details>
+
+        <details style="background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px;">
+          <summary style="font-weight: 600; cursor: pointer; font-size: 0.97rem; color: var(--text);">
+            Can I order cookies for an event or as a gift?
+          </summary>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; line-height: 1.7;">
+            Absolutely! Cookies make the perfect gift. Reach out via the contact form above and we'll work something out together.
+          </p>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="logo.svg" alt="Bites by Mena" class="footer-logo-img" />
+          <p>Freshly baked cookies made with love in Mena's kitchen. Every bite is a little piece of happiness.</p>
+        </div>
+        <div>
+          <h4>Pages</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="order.html">Order</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:hello@bitsbymena.nl">hello@bitsbymena.nl</a></li>
+            <li><a href="contact.html">Send a message</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Bites by Mena — All rights reserved</span>
+        <span>Made with 🍪 by Mena</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', function () {
+      navbar.classList.toggle('navbar--scrolled', window.scrollY > 20);
+    });
+
+    function submitContact(e) {
+      e.preventDefault();
+      const form = document.getElementById('contactForm');
+      const success = document.getElementById('contactSuccess');
+      success.style.display = 'block';
+      form.querySelectorAll('input, select, textarea, button[type=submit]').forEach(el => el.disabled = true);
+      success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+
+</body>
+</html>

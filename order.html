@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order — Bites by Mena</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .order-section { padding: 70px 0; }
+
+    .order-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      font-size: 0.9rem;
+    }
+
+    .order-summary-row:last-of-type { border-bottom: none; }
+
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      margin-top: 8px;
+      border-top: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .order-total strong {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--white);
+    }
+
+    .order-total .total-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--pink-light);
+    }
+
+    .order-info h3 { margin-bottom: 6px; }
+    .order-info > p { margin-bottom: 28px; }
+
+    .order-info .order-summary-row span:first-child {
+      opacity: 0.75;
+    }
+
+    .order-info .order-details {
+      margin-bottom: 28px;
+    }
+
+    .delivery-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+
+    .delivery-option {
+      position: relative;
+    }
+
+    .delivery-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+    }
+
+    .delivery-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 16px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .delivery-option label .do-icon { font-size: 1.6rem; }
+
+    .delivery-option input[type="radio"]:checked + label {
+      background: var(--pink-light);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .qty-control button {
+      background: none;
+      border: none;
+      width: 40px;
+      height: 46px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: background 0.2s;
+    }
+
+    .qty-control button:hover { background: var(--pink-light); }
+
+    .qty-control input {
+      width: 60px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      outline: none;
+      padding: 0;
+    }
+
+    .price-preview {
+      background: var(--pink-light);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .price-preview span { font-size: 0.9rem; color: var(--text-muted); }
+    .price-preview strong {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--red);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.svg" alt="Bites by Mena" class="nav-logo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+        <div class="logo-text" style="display:none;">Bites by Mena<span>Homemade Cookies</span></div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="nav-cta"><a href="order.html" class="active">Order Now</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <span class="section-tag">Ready for something sweet?</span>
+      <h1 class="section-title">Place Your Order</h1>
+      <p>Fill in the form below and Mena will bake your cookies fresh.</p>
+    </div>
+  </section>
+
+  <!-- Order -->
+  <section class="order-section">
+    <div class="container">
+      <div class="order-grid">
+
+        <!-- Left: Info -->
+        <div class="order-info">
+          <h3>Your Order</h3>
+          <p>Here's what you're ordering — adjust the quantity on the right.</p>
+
+          <ul class="order-details">
+            <li><span class="di">🍪</span> Classic Chocolate Chip Cookie — €2.50/pc</li>
+            <li><span class="di">🏠</span> Baked fresh in Mena's kitchen</li>
+            <li><span class="di">📦</span> Delivery or pickup available</li>
+            <li><span class="di">⏱️</span> Please allow 2–3 days for baking</li>
+            <li><span class="di">📩</span> You'll receive a confirmation by email</li>
+          </ul>
+
+          <div style="border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; margin-top: 10px;">
+            <div class="order-summary-row">
+              <span>Classic Chocolate Chip Cookie</span>
+              <span id="summary-qty">1 pc</span>
+            </div>
+            <div class="order-summary-row">
+              <span>Price per cookie</span>
+              <span>€2.50</span>
+            </div>
+            <div class="order-total">
+              <strong>Total</strong>
+              <span class="total-price" id="summary-total">€2.50</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div class="order-form-wrap">
+          <h3>Your Details</h3>
+
+          <div class="form-product">
+            <span class="fp-icon">🍪</span>
+            <div class="fp-info">
+              <strong>Classic Chocolate Chip Cookie</strong>
+              <span>€2.50 per cookie · Baked fresh to order</span>
+            </div>
+          </div>
+
+          <form id="orderForm" onsubmit="submitOrder(event)" novalidate>
+
+            <!-- Quantity -->
+            <div class="form-group">
+              <label for="quantity">How many cookies?</label>
+              <div class="qty-control">
+                <button type="button" onclick="changeQty(-1)">−</button>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" max="100" readonly />
+                <button type="button" onclick="changeQty(1)">+</button>
+              </div>
+            </div>
+
+            <!-- Price preview -->
+            <div class="price-preview">
+              <span>Your total</span>
+              <strong id="pricePreview">€2.50</strong>
+            </div>
+
+            <!-- Name -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First name *</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Mena" required />
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last name *</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Slooten" required />
+              </div>
+            </div>
+
+            <!-- Email & Phone -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email address *</label>
+                <input type="email" id="email" name="email" placeholder="you@email.com" required />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone number</label>
+                <input type="tel" id="phone" name="phone" placeholder="+31 6 12345678" />
+              </div>
+            </div>
+
+            <!-- Delivery -->
+            <div class="form-group">
+              <label>Delivery or pickup? *</label>
+              <div class="delivery-options">
+                <div class="delivery-option">
+                  <input type="radio" id="delivery" name="deliveryType" value="delivery" checked onchange="toggleAddress()" />
+                  <label for="delivery">
+                    <span class="do-icon">🚚</span>
+                    Delivery
+                  </label>
+                </div>
+                <div class="delivery-option">
+                  <input type="radio" id="pickup" name="deliveryType" value="pickup" onchange="toggleAddress()" />
+                  <label for="pickup">
+                    <span class="do-icon">🏠</span>
+                    Pickup
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address (shown only for delivery) -->
+            <div id="addressFields">
+              <div class="form-group">
+                <label for="street">Street + house number *</label>
+                <input type="text" id="street" name="street" placeholder="Bakkerstraat 12" />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="postcode">Postcode *</label>
+                  <input type="text" id="postcode" name="postcode" placeholder="1234 AB" />
+                </div>
+                <div class="form-group">
+                  <label for="city">City *</label>
+                  <input type="text" id="city" name="city" placeholder="Amsterdam" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+              <label for="notes">Special wishes or notes</label>
+              <textarea id="notes" name="notes" placeholder="Any allergies, special packaging, or just something nice to say 🍪"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 15px;">
+              Place Order
+            </button>
+            <p class="form-submit-note">
+              Mena will confirm your order by email within 24 hours.
+            </p>
+
+            <div class="form-success" id="successMsg">
+              🍪 Thank you! Your order has been received. Mena will be in touch soon!
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="logo.svg" alt="Bites by Mena" class="footer-logo-img" />
+          <p>Freshly baked cookies made with love in Mena's kitchen. Every bite is a little piece of happiness.</p>
+        </div>
+        <div>
+          <h4>Pages</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="order.html">Order</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:hello@bitsbymena.nl">hello@bitsbymena.nl</a></li>
+            <li><a href="contact.html">Send a message</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Bites by Mena — All rights reserved</span>
+        <span>Made with 🍪 by Mena</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', function () {
+      navbar.classList.toggle('navbar--scrolled', window.scrollY > 20);
+    });
+
+    const PRICE = 2.50;
+    let qty = 1;
+
+    function changeQty(delta) {
+      qty = Math.max(1, qty + delta);
+      document.getElementById('quantity').value = qty;
+      const total = (PRICE * qty).toFixed(2);
+      document.getElementById('pricePreview').textContent = '€' + total;
+      document.getElementById('summary-qty').textContent = qty + ' pc' + (qty > 1 ? 's' : '');
+      document.getElementById('summary-total').textContent = '€' + total;
+    }
+
+    function toggleAddress() {
+      const isDelivery = document.getElementById('delivery').checked;
+      document.getElementById('addressFields').style.display = isDelivery ? 'block' : 'none';
+    }
+
+    function submitOrder(e) {
+      e.preventDefault();
+      const form = document.getElementById('orderForm');
+      const success = document.getElementById('successMsg');
+      success.style.display = 'block';
+      form.querySelectorAll('input, select, textarea, button[type=submit]').forEach(el => el.disabled = true);
+      success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+
+</body>
+</html>
