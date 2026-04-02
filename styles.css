@@ -893,6 +893,8 @@ img {
 
   .navbar .container { flex-wrap: wrap; }
 
+  .navbar .container { height: auto; min-height: 82px; }
+
   .nav-links {
     display: none;
     width: 100%;
@@ -902,7 +904,10 @@ img {
     padding: 8px 0 18px;
   }
 
-  .nav-links.mobile-open { display: flex; }
+  .nav-links.mobile-open {
+    display: flex;
+    background: var(--white);
+  }
 
   .nav-links li {
     padding: 13px 0;
