@@ -900,7 +900,6 @@ img {
     gap: 0;
     border-top: 1px solid var(--border);
     padding: 8px 0 18px;
-    background: var(--white);
   }
 
   .nav-links.mobile-open { display: flex; }

@@ -368,13 +368,16 @@
     const hamburger = document.getElementById('navHamburger');
     const navLinks  = document.getElementById('navLinks');
     hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('mobile-open');
+      const isOpen = navLinks.classList.toggle('mobile-open');
       hamburger.classList.toggle('open');
+      if (isOpen) navbar.classList.add('navbar--scrolled');
+      else if (window.scrollY <= 20) navbar.classList.remove('navbar--scrolled');
     });
     navLinks.querySelectorAll('a').forEach(link =>
       link.addEventListener('click', () => {
         navLinks.classList.remove('mobile-open');
         hamburger.classList.remove('open');
+        if (window.scrollY <= 20) navbar.classList.remove('navbar--scrolled');
       })
     );
 
