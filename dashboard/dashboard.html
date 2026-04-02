@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Bites by Mena</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="dash-wrap">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="../logo.svg" alt="Bites by Mena" />
+      </div>
+
+      <span class="sidebar-label">Menu</span>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="#" class="active" onclick="showSection('products', this)">
+            <span class="nav-icon">🍪</span> Products
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="showSection('add', this); resetForm()">
+            <span class="nav-icon">➕</span> Add Product
+          </a>
+        </li>
+        <li>
+          <a href="../index.html" target="_blank">
+            <span class="nav-icon">🌐</span> View Website
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-bottom">
+        <button class="btn-logout" onclick="logout()">🚪 Log out</button>
+      </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <div class="dash-main">
+
+      <!-- Topbar -->
+      <header class="dash-topbar">
+        <div>
+          <h1 id="topbarTitle">Products</h1>
+          <p class="topbar-sub" id="topbarSub">Manage your cookies</p>
+        </div>
+        <button class="btn btn-primary" onclick="showSection('add', null); resetForm()">
+          ➕ Add Product
+        </button>
+      </header>
+
+      <!-- Content -->
+      <div class="dash-content">
+
+        <!-- ── Products section ── -->
+        <div id="section-products" class="section active">
+
+          <!-- Stats -->
+          <div class="stats-bar">
+            <div class="stat-card">
+              <div class="stat-icon pink">🍪</div>
+              <div>
+                <div class="stat-num" id="statTotal">0</div>
+                <div class="stat-lbl">Total products</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">✅</div>
+              <div>
+                <div class="stat-num" id="statActive">0</div>
+                <div class="stat-lbl">Available now</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon peach">🌐</div>
+              <div>
+                <div class="stat-num" id="statHidden">0</div>
+                <div class="stat-lbl">Hidden</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section header -->
+          <div class="section-header">
+            <h2>Your Cookies</h2>
+          </div>
+
+          <!-- Products grid -->
+          <div id="productsGrid"></div>
+
+        </div>
+
+        <!-- ── Add / Edit section ── -->
+        <div id="section-add" class="section">
+          <div class="form-card">
+            <h2 class="form-title" id="formTitle">Add New Product</h2>
+
+            <form id="productForm" onsubmit="saveProduct(event)">
+
+              <!-- Image upload -->
+              <div class="form-group">
+                <label>Product photo</label>
+                <div class="img-upload-area" id="uploadArea">
+                  <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(this)" />
+                  <div id="uploadPlaceholder">
+                    <div class="upload-icon">📷</div>
+                    <p class="upload-text"><strong>Click to upload</strong> or drag & drop<br>PNG, JPG or WEBP</p>
+                  </div>
+                  <div class="img-preview" id="imgPreview">
+                    <img id="previewImg" src="" alt="Preview" />
+                    <button type="button" class="img-preview-remove" onclick="removeImage()">✕</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Name + Price -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="prodName">Product name <span>*</span></label>
+                  <input type="text" id="prodName" placeholder="e.g. Chocolate Chip Cookie" required />
+                </div>
+                <div class="form-group">
+                  <label for="prodPrice">Price (€) <span>*</span></label>
+                  <input type="number" id="prodPrice" placeholder="2.50" min="0" step="0.01" required />
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="form-group">
+                <label for="prodDesc">Description <span>*</span></label>
+                <textarea id="prodDesc" placeholder="Describe this cookie — ingredients, taste, size..." required></textarea>
+              </div>
+
+              <!-- Badge label -->
+              <div class="form-group">
+                <label for="prodBadge">Badge label <small style="font-weight:400;color:var(--text-muted)">(optional — e.g. "New", "Fan favourite")</small></label>
+                <input type="text" id="prodBadge" placeholder="Fan favourite" />
+              </div>
+
+              <!-- Price per unit -->
+              <div class="form-group">
+                <label for="prodUnit">Price unit label <small style="font-weight:400;color:var(--text-muted)">(optional — e.g. "per cookie", "per box")</small></label>
+                <input type="text" id="prodUnit" placeholder="per cookie" />
+              </div>
+
+              <!-- Availability toggle -->
+              <div class="form-group">
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <strong>Available on website</strong>
+                    <span>Customers can see and order this product</span>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" id="prodAvailable" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <input type="hidden" id="editId" value="" />
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="saveBtn">💾 Save Product</button>
+                <button type="button" class="btn btn-outline" onclick="showSection('products', null)">Cancel</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div><!-- /dash-content -->
+    </div><!-- /dash-main -->
+  </div><!-- /dash-wrap -->
+
+  <!-- ── Delete confirm modal ── -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-card">
+      <div class="modal-icon">🗑️</div>
+      <h3>Delete product?</h3>
+      <p>This will permanently remove this product from your website. This cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" onclick="confirmDelete()">Yes, delete</button>
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Auth guard ──
+    if (sessionStorage.getItem('bbm_auth') !== 'true') {
+      window.location.href = 'index.html';
+    }
+
+    // ── State ──
+    let products  = loadProducts();
+    let deleteId  = null;
+    let imageData = '';   // base64 of current upload
+
+    // ── Storage helpers ──
+    function loadProducts() {
+      try {
+        return JSON.parse(localStorage.getItem('bbm_products')) || [];
+      } catch { return []; }
+    }
+
+    function saveProducts() {
+      localStorage.setItem('bbm_products', JSON.stringify(products));
+    }
+
+    // ── Navigation ──
+    function showSection(name, linkEl) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById('section-' + name).classList.add('active');
+
+      document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+      if (linkEl) linkEl.classList.add('active');
+
+      const titles = {
+        products: ['Products', 'Manage your cookies'],
+        add:      ['Add Product', 'Fill in the details below'],
+      };
+      document.getElementById('topbarTitle').textContent = titles[name][0];
+      document.getElementById('topbarSub').textContent   = titles[name][1];
+
+      if (name === 'products') renderProducts();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('bbm_auth');
+      window.location.href = 'index.html';
+    }
+
+    // ── Render products ──
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      updateStats();
+
+      if (products.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🍪</div>
+            <h3>No products yet</h3>
+            <p>Add your first cookie to get started!</p>
+            <button class="btn btn-primary" onclick="showSection('add', null); resetForm()">➕ Add your first product</button>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = products.map(p => `
+        <div class="product-card ${p.available ? '' : 'unavailable'}" id="card-${p.id}">
+          <div class="pc-img">
+            ${p.image
+              ? `<img src="${p.image}" alt="${p.name}" />`
+              : '🍪'}
+            <span class="pc-badge ${p.available ? 'available' : 'unavailable'}">
+              ${p.available ? '✅ Available' : '⏸ Hidden'}
+            </span>
+          </div>
+          <div class="pc-body">
+            <div class="pc-name">${p.name}</div>
+            <div class="pc-price">€${parseFloat(p.price).toFixed(2)} <small style="font-weight:400;color:var(--text-muted);font-size:0.78rem">${p.unit || ''}</small></div>
+            <div class="pc-desc">${p.description}</div>
+            <div class="pc-actions">
+              <button class="btn btn-outline btn-sm" onclick="editProduct(${p.id})">✏️ Edit</button>
+              <button class="btn btn-sm ${p.available ? 'btn-outline' : 'btn-primary'}" onclick="toggleAvailability(${p.id})">
+                ${p.available ? '⏸ Hide' : '▶ Show'}
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${p.id})">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateStats() {
+      const active = products.filter(p => p.available).length;
+      document.getElementById('statTotal').textContent  = products.length;
+      document.getElementById('statActive').textContent = active;
+      document.getElementById('statHidden').textContent = products.length - active;
+    }
+
+    // ── Image upload ──
+    function handleImageUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      // Warn if file is very large
+      if (file.size > 3 * 1024 * 1024) {
+        showToast('Image is large — it may slow the page. Try a smaller file.', 'error');
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imageData = e.target.result;
+        document.getElementById('previewImg').src       = imageData;
+        document.getElementById('imgPreview').style.display    = 'block';
+        document.getElementById('uploadPlaceholder').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+      imageData = '';
+      document.getElementById('imageInput').value        = '';
+      document.getElementById('imgPreview').style.display    = 'none';
+      document.getElementById('uploadPlaceholder').style.display = 'block';
+    }
+
+    // ── Save product (add or edit) ──
+    function saveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById('editId').value;
+
+      const product = {
+        id:          id ? parseInt(id) : Date.now(),
+        name:        document.getElementById('prodName').value.trim(),
+        price:       document.getElementById('prodPrice').value,
+        description: document.getElementById('prodDesc').value.trim(),
+        badge:       document.getElementById('prodBadge').value.trim(),
+        unit:        document.getElementById('prodUnit').value.trim(),
+        available:   document.getElementById('prodAvailable').checked,
+        image:       imageData,
+      };
+
+      if (id) {
+        // Edit existing
+        const idx = products.findIndex(p => p.id === parseInt(id));
+        if (idx > -1) {
+          // Keep existing image if none uploaded
+          if (!imageData) product.image = products[idx].image;
+          products[idx] = product;
+        }
+        showToast('✅ Product updated!', 'success');
+      } else {
+        // Add new
+        products.push(product);
+        showToast('🍪 Product added!', 'success');
+      }
+
+      saveProducts();
+      resetForm();
+      showSection('products', null);
+      // Update active sidebar link
+      document.querySelectorAll('.sidebar-nav a').forEach((a, i) => {
+        a.classList.toggle('active', i === 0);
+      });
+    }
+
+    // ── Edit ──
+    function editProduct(id) {
+      const p = products.find(p => p.id === id);
+      if (!p) return;
+
+      document.getElementById('formTitle').textContent    = 'Edit Product';
+      document.getElementById('saveBtn').textContent      = '💾 Save Changes';
+      document.getElementById('editId').value             = p.id;
+      document.getElementById('prodName').value           = p.name;
+      document.getElementById('prodPrice').value          = p.price;
+      document.getElementById('prodDesc').value           = p.description;
+      document.getElementById('prodBadge').value          = p.badge || '';
+      document.getElementById('prodUnit').value           = p.unit  || '';
+      document.getElementById('prodAvailable').checked    = p.available;
+
+      if (p.image) {
+        imageData = p.image;
+        document.getElementById('previewImg').src              = p.image;
+        document.getElementById('imgPreview').style.display       = 'block';
+        document.getElementById('uploadPlaceholder').style.display = 'none';
+      } else {
+        removeImage();
+      }
+
+      showSection('add', null);
+      document.getElementById('topbarTitle').textContent = 'Edit Product';
+      document.getElementById('topbarSub').textContent   = 'Update the details below';
+    }
+
+    // ── Toggle availability ──
+    function toggleAvailability(id) {
+      const p = products.find(p => p.id === id);
+      if (!p) return;
+      p.available = !p.available;
+      saveProducts();
+      renderProducts();
+      showToast(p.available ? '✅ Product is now visible' : '⏸ Product is now hidden', 'success');
+    }
+
+    // ── Delete ──
+    function openDeleteModal(id) {
+      deleteId = id;
+      document.getElementById('deleteModal').classList.add('open');
+    }
+
+    function closeModal() {
+      deleteId = null;
+      document.getElementById('deleteModal').classList.remove('open');
+    }
+
+    function confirmDelete() {
+      products = products.filter(p => p.id !== deleteId);
+      saveProducts();
+      closeModal();
+      renderProducts();
+      showToast('🗑️ Product deleted', 'success');
+    }
+
+    // ── Reset form ──
+    function resetForm() {
+      document.getElementById('productForm').reset();
+      document.getElementById('editId').value           = '';
+      document.getElementById('formTitle').textContent  = 'Add New Product';
+      document.getElementById('saveBtn').textContent    = '💾 Save Product';
+      document.getElementById('prodAvailable').checked  = true;
+      removeImage();
+    }
+
+    // ── Toast ──
+    function showToast(msg, type = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className   = 'toast ' + type + ' show';
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── Close modal on overlay click ──
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // ── Init ──
+    renderProducts();
+  </script>
+
+</body>
+</html>

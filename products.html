@@ -213,48 +213,10 @@
     </div>
   </section>
 
-  <!-- Product Detail -->
+  <!-- Products — loaded from dashboard or fallback to default -->
   <section class="product-detail">
-    <div class="container">
-      <div class="product-detail-grid">
-
-        <div class="product-detail-img">
-          🍪
-          <span class="pd-badge">✨ Fan favourite</span>
-        </div>
-
-        <div class="product-detail-content">
-          <span class="section-tag">Signature Cookie</span>
-          <h1>Classic Chocolate Chip Cookie</h1>
-
-          <div class="pd-price">€2.50 <small>/ per cookie</small></div>
-
-          <p class="pd-desc">
-            This is the cookie that started it all. Baked fresh for every order,
-            with crispy golden edges and a perfectly chewy centre loaded with
-            rich, melty chocolate chips. Made entirely by hand using real butter,
-            pure vanilla extract, and premium dark chocolate — no shortcuts, ever.
-          </p>
-
-          <ul class="pd-details">
-            <li><span class="icon">🌿</span> Made with quality, natural ingredients</li>
-            <li><span class="icon">🏠</span> Baked fresh in Mena's kitchen</li>
-            <li><span class="icon">📦</span> Carefully packed per order</li>
-            <li><span class="icon">⏱️</span> Order in advance — freshness guaranteed</li>
-            <li><span class="icon">🍫</span> Rich dark chocolate chips</li>
-          </ul>
-
-          <div class="pd-actions">
-            <div class="quantity-selector">
-              <button class="qty-btn" onclick="changeQty(-1)">−</button>
-              <span class="qty-num" id="qty">1</span>
-              <button class="qty-btn" onclick="changeQty(1)">+</button>
-            </div>
-            <a href="order.html" class="btn btn-primary">Order Now</a>
-          </div>
-        </div>
-
-      </div>
+    <div class="container" id="productsContainer">
+      <!-- Rendered by JS below -->
     </div>
   </section>
 
@@ -373,11 +335,64 @@
       })
     );
 
-    let qty = 1;
-    function changeQty(delta) {
-      qty = Math.max(1, qty + delta);
-      document.getElementById('qty').textContent = qty;
+    // ── Default product shown when dashboard has no products yet ──
+    const DEFAULT_PRODUCTS = [
+      {
+        id: 1,
+        name: 'Classic Chocolate Chip Cookie',
+        price: '2.50',
+        unit: 'per cookie',
+        description: 'This is the cookie that started it all. Baked fresh for every order, with crispy golden edges and a perfectly chewy centre loaded with rich, melty chocolate chips.',
+        badge: 'Fan favourite',
+        image: '',
+        available: true
+      }
+    ];
+
+    function renderProducts() {
+      const container = document.getElementById('productsContainer');
+      let stored = [];
+      try { stored = JSON.parse(localStorage.getItem('bbm_products')) || []; } catch {}
+
+      const list = stored.length > 0
+        ? stored.filter(p => p.available)
+        : DEFAULT_PRODUCTS;
+
+      if (list.length === 0) {
+        container.innerHTML = `<p style="text-align:center;padding:60px 0;color:var(--text-muted);">No products available right now — check back soon!</p>`;
+        return;
+      }
+
+      container.innerHTML = list.map((p, i) => {
+        const isEven = i % 2 === 0;
+        return `
+        <div class="product-detail-grid" style="margin-bottom:${list.length > 1 ? '70px' : '0'}">
+          <div class="product-detail-img" style="${p.image ? 'padding:0;overflow:hidden;' : ''}">
+            ${p.image
+              ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:30px;" />`
+              : '🍪'}
+            ${p.badge ? `<span class="pd-badge">✨ ${p.badge}</span>` : ''}
+          </div>
+          <div class="product-detail-content">
+            <span class="section-tag">Handmade Cookie</span>
+            <h1>${p.name}</h1>
+            <div class="pd-price">€${parseFloat(p.price).toFixed(2)} <small>${p.unit ? '/ ' + p.unit : ''}</small></div>
+            <p class="pd-desc">${p.description}</p>
+            <ul class="pd-details">
+              <li><span class="icon">🌿</span> Made with quality, natural ingredients</li>
+              <li><span class="icon">🏠</span> Baked fresh in Mena's kitchen</li>
+              <li><span class="icon">📦</span> Carefully packed per order</li>
+              <li><span class="icon">⏱️</span> Order in advance — freshness guaranteed</li>
+            </ul>
+            <div class="pd-actions">
+              <a href="order.html" class="btn btn-primary">Order Now</a>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
     }
+
+    renderProducts();
   </script>
 
 </body>
