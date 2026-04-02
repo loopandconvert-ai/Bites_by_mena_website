@@ -393,6 +393,11 @@
     }
 
     renderProducts();
+
+    // Re-render automatically when user switches back to this tab
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) renderProducts(); });
+    // Re-render when another tab changes localStorage (e.g. dashboard)
+    window.addEventListener('storage', e => { if (e.key === 'bbm_products') renderProducts(); });
   </script>
 
 </body>
