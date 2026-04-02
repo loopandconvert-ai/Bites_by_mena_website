@@ -859,10 +859,91 @@ img {
   text-align: center;
 }
 
+/* ── Hamburger button (hidden on desktop) ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2.5px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
 
+  /* — Hamburger & dropdown menu — */
+  .nav-hamburger { display: flex; }
+
+  .navbar .container { flex-wrap: wrap; }
+
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding: 8px 0 18px;
+    background: var(--white);
+  }
+
+  .nav-links.mobile-open { display: flex; }
+
+  .nav-links li {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links li:last-child { border-bottom: none; }
+
+  .nav-links a { font-size: 1rem; color: var(--text); }
+
+  .nav-links .nav-cta { margin-top: 6px; }
+  .nav-links .nav-cta a {
+    background: none;
+    color: var(--red);
+    padding: 0;
+    border-radius: 0;
+    font-weight: 600;
+  }
+
+  /* — Logo on mobile — */
+  .nav-logo-img { height: 56px; }
+
+  /* — Hero: bigger cookie, smaller badge — */
+  .hero-img .img-wrap { font-size: 11rem; }
+
+  .hero-badge {
+    padding: 9px 13px;
+    gap: 8px;
+    bottom: 12px;
+    left: -4px;
+    border-radius: 12px;
+  }
+
+  .hero-badge .badge-icon { font-size: 1.1rem; }
+
+  .hero-badge strong { font-size: 0.82rem; }
+
+  .hero-badge span { font-size: 0.68rem; }
+
+  /* — Layout resets — */
   .hero .container,
   .about-preview .container,
   .order-grid,

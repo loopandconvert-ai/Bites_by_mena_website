@@ -16,13 +16,16 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
         <div class="logo-text" style="display:none;">Bites by Mena<span>Homemade Cookies</span></div>
       </a>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html" class="active">About</a></li>
         <li><a href="products.html">Products</a></li>
         <li><a href="contact.html">Contact</a></li>
         <li class="nav-cta"><a href="order.html">Order Now</a></li>
       </ul>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
 
@@ -176,6 +179,19 @@
     window.addEventListener('scroll', function () {
       navbar.classList.toggle('navbar--scrolled', window.scrollY > 20);
     });
+
+    const hamburger = document.getElementById('navHamburger');
+    const navLinks  = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('mobile-open');
+      hamburger.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(link =>
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('mobile-open');
+        hamburger.classList.remove('open');
+      })
+    );
   </script>
 
 </body>
