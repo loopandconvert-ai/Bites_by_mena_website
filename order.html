@@ -187,7 +187,7 @@
           <p>Here's what you're ordering — adjust the quantity on the right.</p>
 
           <ul class="order-details">
-            <li><span class="di">🍪</span> Classic Chocolate Chip Cookie — €2.50/pc</li>
+            <li><span class="di">🍪</span> <span id="orderProductLine">Loading…</span></li>
             <li><span class="di">🏠</span> Baked fresh in Mena's kitchen</li>
             <li><span class="di">📦</span> Delivery or pickup available</li>
             <li><span class="di">⏱️</span> Please allow 2–3 days for baking</li>
@@ -196,16 +196,16 @@
 
           <div style="border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; margin-top: 10px;">
             <div class="order-summary-row">
-              <span>Classic Chocolate Chip Cookie</span>
+              <span id="summaryProductName">—</span>
               <span id="summary-qty">1 pc</span>
             </div>
             <div class="order-summary-row">
-              <span>Price per cookie</span>
-              <span>€2.50</span>
+              <span>Price per item</span>
+              <span id="summaryPriceLabel">—</span>
             </div>
             <div class="order-total">
               <strong>Total</strong>
-              <span class="total-price" id="summary-total">€2.50</span>
+              <span class="total-price" id="summary-total">—</span>
             </div>
           </div>
         </div>
@@ -214,11 +214,17 @@
         <div class="order-form-wrap">
           <h3>Your Details</h3>
 
+          <!-- Product selector (shown when there are multiple products) -->
+          <div class="form-group" id="productSelectorWrap" style="display:none;">
+            <label for="productSelector">Choose a product</label>
+            <select id="productSelector" onchange="onProductChange()"></select>
+          </div>
+
           <div class="form-product">
             <span class="fp-icon">🍪</span>
             <div class="fp-info">
-              <strong>Classic Chocolate Chip Cookie</strong>
-              <span>€2.50 per cookie · Baked fresh to order</span>
+              <strong id="fpName">Loading…</strong>
+              <span id="fpDesc"></span>
             </div>
           </div>
 
@@ -381,16 +387,65 @@
       })
     );
 
-    const PRICE = 2.50;
+    // ── Load products from localStorage ──
+    const DEFAULT_PRODUCT = { id: 1, name: 'Classic Chocolate Chip Cookie', price: '2.50', unit: 'per cookie', available: true };
+    let allProducts = [];
+    try { allProducts = (JSON.parse(localStorage.getItem('bbm_products')) || []).filter(p => p.available); } catch {}
+    if (!allProducts.length) allProducts = [DEFAULT_PRODUCT];
+
+    // Read ?id= from URL to pre-select the right product
+    const urlId = new URLSearchParams(window.location.search).get('id');
+    let selectedProduct = allProducts.find(p => String(p.id) === urlId) || allProducts[0];
     let qty = 1;
+
+    function setProduct(p) {
+      selectedProduct = p;
+      const priceStr = '€' + parseFloat(p.price).toFixed(2);
+      const unitStr  = p.unit || 'per item';
+      document.getElementById('orderProductLine').textContent  = `${p.name} — ${priceStr}/${unitStr}`;
+      document.getElementById('summaryProductName').textContent = p.name;
+      document.getElementById('summaryPriceLabel').textContent  = priceStr;
+      document.getElementById('fpName').textContent = p.name;
+      document.getElementById('fpDesc').textContent = `${priceStr} ${unitStr} · Baked fresh to order`;
+      qty = 1;
+      document.getElementById('quantity').value = 1;
+      updateTotal();
+    }
+
+    function updateTotal() {
+      const price = parseFloat(selectedProduct.price);
+      const total = (price * qty).toFixed(2);
+      document.getElementById('pricePreview').textContent = '€' + total;
+      document.getElementById('summary-qty').textContent  = qty + ' pc' + (qty > 1 ? 's' : '');
+      document.getElementById('summary-total').textContent = '€' + total;
+    }
+
+    function onProductChange() {
+      const id  = document.getElementById('productSelector').value;
+      const p   = allProducts.find(p => String(p.id) === id);
+      if (p) setProduct(p);
+    }
+
+    // Populate selector if multiple products
+    if (allProducts.length > 1) {
+      const sel = document.getElementById('productSelector');
+      allProducts.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = String(p.id);
+        opt.textContent = `${p.name} — €${parseFloat(p.price).toFixed(2)}`;
+        if (String(p.id) === String(selectedProduct.id)) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      document.getElementById('productSelectorWrap').style.display = 'block';
+    }
+
+    // Init
+    setProduct(selectedProduct);
 
     function changeQty(delta) {
       qty = Math.max(1, qty + delta);
       document.getElementById('quantity').value = qty;
-      const total = (PRICE * qty).toFixed(2);
-      document.getElementById('pricePreview').textContent = '€' + total;
-      document.getElementById('summary-qty').textContent = qty + ' pc' + (qty > 1 ? 's' : '');
-      document.getElementById('summary-total').textContent = '€' + total;
+      updateTotal();
     }
 
     function toggleAddress() {

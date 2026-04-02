@@ -181,7 +181,7 @@
             <p>${p.description}</p>
             <div class="product-footer">
               <div class="product-price">€${parseFloat(p.price).toFixed(2)} <span>${p.unit ? '/ ' + p.unit : ''}</span></div>
-              <a href="order.html" class="btn btn-primary" style="padding:10px 22px;font-size:0.85rem;">Order</a>
+              <a href="order.html?id=${p.id}" class="btn btn-primary" style="padding:10px 22px;font-size:0.85rem;">Order</a>
             </div>
           </div>
         </div>`).join('');
