@@ -387,16 +387,48 @@
       })
     );
 
-    // ── Load products from localStorage ──
-    const DEFAULT_PRODUCT = { id: 1, name: 'Classic Chocolate Chip Cookie', price: '2.50', unit: 'per cookie', available: true };
+    // ── Load products from Firebase / localStorage ──
+    const FIREBASE_URL = 'https://bites-by-mena-default-rtdb.europe-west1.firebasedatabase.app';
     let allProducts = [];
-    try { allProducts = (JSON.parse(localStorage.getItem('bbm_products')) || []).filter(p => p.available); } catch {}
-    if (!allProducts.length) allProducts = [DEFAULT_PRODUCT];
-
-    // Read ?id= from URL to pre-select the right product
-    const urlId = new URLSearchParams(window.location.search).get('id');
-    let selectedProduct = allProducts.find(p => String(p.id) === urlId) || allProducts[0];
+    let selectedProduct = null;
     let qty = 1;
+
+    async function initOrder() {
+      try {
+        const res = await fetch(`${FIREBASE_URL}/bbm_products.json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length) allProducts = data.filter(p => p.available);
+        }
+      } catch {}
+      if (!allProducts.length) {
+        try { allProducts = (JSON.parse(localStorage.getItem('bbm_products')) || []).filter(p => p.available); } catch {}
+      }
+
+      const urlId = new URLSearchParams(window.location.search).get('id');
+      selectedProduct = allProducts.find(p => String(p.id) === urlId) || allProducts[0];
+
+      if (!selectedProduct) {
+        document.getElementById('orderProductLine').textContent = 'No products available yet.';
+        document.getElementById('fpName').textContent = 'No products available yet.';
+        return;
+      }
+
+      // Populate selector if multiple products
+      if (allProducts.length > 1) {
+        const sel = document.getElementById('productSelector');
+        allProducts.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = String(p.id);
+          opt.textContent = `${p.name} — €${parseFloat(p.price).toFixed(2)}`;
+          if (String(p.id) === String(selectedProduct.id)) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        document.getElementById('productSelectorWrap').style.display = 'block';
+      }
+
+      setProduct(selectedProduct);
+    }
 
     function setProduct(p) {
       selectedProduct = p;
@@ -426,21 +458,8 @@
       if (p) setProduct(p);
     }
 
-    // Populate selector if multiple products
-    if (allProducts.length > 1) {
-      const sel = document.getElementById('productSelector');
-      allProducts.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = String(p.id);
-        opt.textContent = `${p.name} — €${parseFloat(p.price).toFixed(2)}`;
-        if (String(p.id) === String(selectedProduct.id)) opt.selected = true;
-        sel.appendChild(opt);
-      });
-      document.getElementById('productSelectorWrap').style.display = 'block';
-    }
-
     // Init
-    setProduct(selectedProduct);
+    initOrder();
 
     function changeQty(delta) {
       qty = Math.max(1, qty + delta);

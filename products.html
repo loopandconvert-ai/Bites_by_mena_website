@@ -335,10 +335,21 @@
       })
     );
 
-    function renderProducts() {
+    const FIREBASE_URL = 'https://bites-by-mena-default-rtdb.europe-west1.firebasedatabase.app';
+
+    async function renderProducts() {
       const container = document.getElementById('productsContainer');
       let stored = [];
-      try { stored = JSON.parse(localStorage.getItem('bbm_products')) || []; } catch {}
+      try {
+        const res = await fetch(`${FIREBASE_URL}/bbm_products.json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length) stored = data;
+        }
+      } catch {}
+      if (!stored.length) {
+        try { stored = JSON.parse(localStorage.getItem('bbm_products')) || []; } catch {}
+      }
       const list = stored.filter(p => p.available);
 
       if (list.length === 0) {
@@ -374,7 +385,6 @@
 
     renderProducts();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) renderProducts(); });
-    window.addEventListener('storage', e => { if (e.key === 'bbm_products') renderProducts(); });
   </script>
 
 </body>

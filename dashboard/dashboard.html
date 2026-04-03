@@ -49,9 +49,12 @@
           <h1 id="topbarTitle">Products</h1>
           <p class="topbar-sub" id="topbarSub">Manage your cookies</p>
         </div>
-        <button class="btn btn-primary" onclick="showSection('add', null); resetForm()">
-          ➕ Add Product
-        </button>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span id="fbStatus" style="font-size:0.8rem;font-weight:500;"></span>
+          <button class="btn btn-primary" onclick="showSection('add', null); resetForm()">
+            ➕ Add Product
+          </button>
+        </div>
       </header>
 
       <!-- Content -->
@@ -199,18 +202,65 @@
       window.location.href = 'index.html';
     }
 
+    const FIREBASE_URL = 'https://bites-by-mena-default-rtdb.europe-west1.firebasedatabase.app';
+
     // ── State ──
     let products  = [];
     let deleteId  = null;
     let imageData = '';
 
-    // ── Storage helpers ──
-    function loadProducts() {
-      try { return JSON.parse(localStorage.getItem('bbm_products')) || []; } catch { return []; }
+    // ── Firebase helpers ──
+    async function fbGet() {
+      const res = await fetch(`${FIREBASE_URL}/bbm_products.json`);
+      if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'HTTP ' + res.status); }
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
     }
 
-    function saveProducts() {
+    async function fbSet(data) {
+      const res = await fetch(`${FIREBASE_URL}/bbm_products.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'HTTP ' + res.status); }
+    }
+
+    function setStatus(ok, msg) {
+      const el = document.getElementById('fbStatus');
+      if (!el) return;
+      el.textContent = ok ? '🟢 ' + msg : '🔴 ' + msg;
+      el.style.color = ok ? '#2e7d55' : '#c0392b';
+    }
+
+    async function loadProducts() {
+      try {
+        const data = await fbGet();
+        if (data.length) { setStatus(true, 'Connected to cloud'); return data; }
+        // Firebase empty — migrate from localStorage
+        const local = JSON.parse(localStorage.getItem('bbm_products') || '[]');
+        if (local.length) {
+          await fbSet(local);
+          setStatus(true, 'Data synced to cloud');
+          return local;
+        }
+        setStatus(true, 'Connected — no products yet');
+        return [];
+      } catch (e) {
+        setStatus(false, 'Cloud error: ' + e.message);
+        return JSON.parse(localStorage.getItem('bbm_products') || '[]');
+      }
+    }
+
+    async function saveProducts() {
       localStorage.setItem('bbm_products', JSON.stringify(products));
+      try {
+        await fbSet(products);
+        setStatus(true, 'Saved & synced');
+      } catch (e) {
+        setStatus(false, 'Sync failed: ' + e.message);
+        showToast('⚠️ Cloud sync failed: ' + e.message, 'error');
+      }
     }
 
     // ── Navigation ──
@@ -313,7 +363,7 @@
     }
 
     // ── Save product (add or edit) ──
-    function saveProduct(e) {
+    async function saveProduct(e) {
       e.preventDefault();
       const id = document.getElementById('editId').value;
 
@@ -340,7 +390,7 @@
         showToast('🍪 Product added!', 'success');
       }
 
-      saveProducts();
+      await saveProducts();
       resetForm();
       showSection('products', null);
       // Update active sidebar link
@@ -379,11 +429,11 @@
     }
 
     // ── Toggle availability ──
-    function toggleAvailability(id) {
+    async function toggleAvailability(id) {
       const p = products.find(p => p.id === id);
       if (!p) return;
       p.available = !p.available;
-      saveProducts();
+      await saveProducts();
       renderProducts();
       showToast(p.available ? '✅ Product is now visible' : '⏸ Product is now hidden', 'success');
     }
@@ -399,9 +449,9 @@
       document.getElementById('deleteModal').classList.remove('open');
     }
 
-    function confirmDelete() {
+    async function confirmDelete() {
       products = products.filter(p => p.id !== deleteId);
-      saveProducts();
+      await saveProducts();
       closeModal();
       renderProducts();
       showToast('🗑️ Product deleted', 'success');
@@ -431,8 +481,7 @@
     });
 
     // ── Init ──
-    products = loadProducts();
-    renderProducts();
+    loadProducts().then(data => { products = data; renderProducts(); });
   </script>
 
 </body>
