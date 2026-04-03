@@ -397,8 +397,11 @@
       try {
         const res = await fetch(`${FIREBASE_URL}/bbm_products.json`);
         if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length) allProducts = data.filter(p => p.available);
+          const raw = await res.json();
+          if (raw) {
+            const data = Array.isArray(raw) ? raw : Object.values(raw);
+            if (data.length) allProducts = data.filter(p => p.available);
+          }
         }
       } catch {}
       if (!allProducts.length) {
