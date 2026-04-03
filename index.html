@@ -160,28 +160,10 @@
 
   <script>
     // ── Featured products from dashboard ──
-    const FIREBASE_URL = 'https://bites-by-mena-default-rtdb.europe-west1.firebasedatabase.app';
-    const USE_FIREBASE = !FIREBASE_URL.includes('YOUR-PROJECT-ID');
-
-    const HOME_DEFAULT = [{
-      id: 1, name: 'Classic Chocolate Chip Cookie', price: '2.50', unit: 'per cookie',
-      description: 'A timeless treat — loaded with rich chocolate chips and baked to golden perfection. Crispy edges, soft centre, unforgettable taste.',
-      badge: 'Fan favourite', image: '', available: true
-    }];
-
-    async function renderHomeFeatured() {
+    function renderHomeFeatured() {
       let stored = [];
-      if (USE_FIREBASE) {
-        try {
-          const res  = await fetch(`${FIREBASE_URL}/bbm_products.json`);
-          const data = await res.json();
-          if (Array.isArray(data)) stored = data;
-        } catch {}
-      }
-      if (!stored.length) {
-        try { stored = JSON.parse(localStorage.getItem('bbm_products')) || []; } catch {}
-      }
-      const list = (stored.length ? stored : HOME_DEFAULT).filter(p => p.available);
+      try { stored = JSON.parse(localStorage.getItem('bbm_products')) || []; } catch {}
+      const list = stored.filter(p => p.available);
       document.getElementById('homeFeatured').innerHTML = list.map(p => `
         <div class="product-card">
           <div class="product-img" style="${p.image ? 'padding:0;overflow:hidden;' : ''}">

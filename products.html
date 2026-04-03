@@ -335,43 +335,11 @@
       })
     );
 
-    // ── Default product shown when dashboard has no products yet ──
-    const DEFAULT_PRODUCTS = [
-      {
-        id: 1,
-        name: 'Classic Chocolate Chip Cookie',
-        price: '2.50',
-        unit: 'per cookie',
-        description: 'This is the cookie that started it all. Baked fresh for every order, with crispy golden edges and a perfectly chewy centre loaded with rich, melty chocolate chips.',
-        badge: 'Fan favourite',
-        image: '',
-        available: true
-      }
-    ];
-
-    // ── Same Firebase URL as dashboard ──
-    const FIREBASE_URL = 'https://bites-by-mena-default-rtdb.europe-west1.firebasedatabase.app';
-    const USE_FIREBASE = !FIREBASE_URL.includes('YOUR-PROJECT-ID');
-
-    async function getProducts() {
-      if (USE_FIREBASE) {
-        try {
-          const res  = await fetch(`${FIREBASE_URL}/bbm_products.json`);
-          const data = await res.json();
-          if (Array.isArray(data) && data.length) return data;
-        } catch {}
-      }
-      try {
-        const local = JSON.parse(localStorage.getItem('bbm_products')) || [];
-        if (local.length) return local;
-      } catch {}
-      return DEFAULT_PRODUCTS;
-    }
-
-    async function renderProducts() {
+    function renderProducts() {
       const container = document.getElementById('productsContainer');
-      const stored    = await getProducts();
-      const list      = stored.filter(p => p.available);
+      let stored = [];
+      try { stored = JSON.parse(localStorage.getItem('bbm_products')) || []; } catch {}
+      const list = stored.filter(p => p.available);
 
       if (list.length === 0) {
         container.innerHTML = `<p style="text-align:center;padding:60px 0;color:var(--text-muted);">No products available right now — check back soon!</p>`;
@@ -406,6 +374,7 @@
 
     renderProducts();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) renderProducts(); });
+    window.addEventListener('storage', e => { if (e.key === 'bbm_products') renderProducts(); });
   </script>
 
 </body>
