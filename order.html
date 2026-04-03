@@ -475,12 +475,58 @@
       document.getElementById('addressFields').style.display = isDelivery ? 'block' : 'none';
     }
 
-    function submitOrder(e) {
+    async function submitOrder(e) {
       e.preventDefault();
-      const form = document.getElementById('orderForm');
+      const form    = document.getElementById('orderForm');
       const success = document.getElementById('successMsg');
-      success.style.display = 'block';
+
+      // Disable form immediately
       form.querySelectorAll('input, select, textarea, button[type=submit]').forEach(el => el.disabled = true);
+
+      if (selectedProduct) {
+        const order = {
+          id:      Date.now(),
+          status:  'pending',
+          product: {
+            id:    selectedProduct.id,
+            name:  selectedProduct.name,
+            price: selectedProduct.price,
+            unit:  selectedProduct.unit || ''
+          },
+          qty:   qty,
+          total: (parseFloat(selectedProduct.price) * qty).toFixed(2),
+          customer: {
+            firstName: form.firstName.value.trim(),
+            lastName:  form.lastName.value.trim(),
+            email:     form.email.value.trim(),
+            phone:     form.phone.value.trim()
+          },
+          delivery: {
+            type:     document.querySelector('input[name="deliveryType"]:checked').value,
+            street:   form.street   ? form.street.value.trim()   : '',
+            postcode: form.postcode ? form.postcode.value.trim() : '',
+            city:     form.city     ? form.city.value.trim()     : ''
+          },
+          notes: form.notes.value.trim()
+        };
+
+        try {
+          const res = await fetch(`${FIREBASE_URL}/bbm_orders.json`);
+          let existing = [];
+          if (res.ok) {
+            const raw = await res.json();
+            if (raw) existing = Array.isArray(raw) ? raw : Object.values(raw);
+          }
+          existing.push(order);
+          await fetch(`${FIREBASE_URL}/bbm_orders.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(existing)
+          });
+        } catch {}
+      }
+
+      success.style.display = 'block';
       success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   </script>
