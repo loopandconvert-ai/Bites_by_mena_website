@@ -349,23 +349,36 @@
       }
     ];
 
-    function renderProducts() {
-      const container = document.getElementById('productsContainer');
-      let stored = [];
-      try { stored = JSON.parse(localStorage.getItem('bbm_products')) || []; } catch {}
+    // ── Same Firebase URL as dashboard ──
+    const FIREBASE_URL = 'https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com';
+    const USE_FIREBASE = !FIREBASE_URL.includes('YOUR-PROJECT-ID');
 
-      const list = stored.length > 0
-        ? stored.filter(p => p.available)
-        : DEFAULT_PRODUCTS;
+    async function getProducts() {
+      if (USE_FIREBASE) {
+        try {
+          const res  = await fetch(`${FIREBASE_URL}/bbm_products.json`);
+          const data = await res.json();
+          if (Array.isArray(data) && data.length) return data;
+        } catch {}
+      }
+      try {
+        const local = JSON.parse(localStorage.getItem('bbm_products')) || [];
+        if (local.length) return local;
+      } catch {}
+      return DEFAULT_PRODUCTS;
+    }
+
+    async function renderProducts() {
+      const container = document.getElementById('productsContainer');
+      const stored    = await getProducts();
+      const list      = stored.filter(p => p.available);
 
       if (list.length === 0) {
         container.innerHTML = `<p style="text-align:center;padding:60px 0;color:var(--text-muted);">No products available right now — check back soon!</p>`;
         return;
       }
 
-      container.innerHTML = list.map((p, i) => {
-        const isEven = i % 2 === 0;
-        return `
+      container.innerHTML = list.map((p, i) => `
         <div class="product-detail-grid" style="margin-bottom:${list.length > 1 ? '70px' : '0'}">
           <div class="product-detail-img" style="${p.image ? 'padding:0;overflow:hidden;' : ''}">
             ${p.image
@@ -388,16 +401,11 @@
               <a href="order.html?id=${p.id}" class="btn btn-primary">Order Now</a>
             </div>
           </div>
-        </div>`;
-      }).join('');
+        </div>`).join('');
     }
 
     renderProducts();
-
-    // Re-render automatically when user switches back to this tab
     document.addEventListener('visibilitychange', () => { if (!document.hidden) renderProducts(); });
-    // Re-render when another tab changes localStorage (e.g. dashboard)
-    window.addEventListener('storage', e => { if (e.key === 'bbm_products') renderProducts(); });
   </script>
 
 </body>

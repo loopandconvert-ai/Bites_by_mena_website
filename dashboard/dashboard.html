@@ -199,20 +199,45 @@
       window.location.href = 'index.html';
     }
 
+    // ════════════════════════════════════════════════════════════════
+    //  FIREBASE SETUP
+    //  1. Go to https://console.firebase.google.com
+    //  2. Create a project → Build → Realtime Database → Create database
+    //  3. Choose "Start in test mode" → Enable
+    //  4. Copy the URL shown (e.g. https://my-project-rtdb.firebaseio.com)
+    //  5. Paste it below, replacing the placeholder
+    // ════════════════════════════════════════════════════════════════
+    const FIREBASE_URL = 'https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com';
+    const USE_FIREBASE = !FIREBASE_URL.includes('YOUR-PROJECT-ID');
+
     // ── State ──
-    let products  = loadProducts();
+    let products  = [];
     let deleteId  = null;
-    let imageData = '';   // base64 of current upload
+    let imageData = '';
 
     // ── Storage helpers ──
-    function loadProducts() {
-      try {
-        return JSON.parse(localStorage.getItem('bbm_products')) || [];
-      } catch { return []; }
+    async function loadProducts() {
+      if (USE_FIREBASE) {
+        try {
+          const res  = await fetch(`${FIREBASE_URL}/bbm_products.json`);
+          const data = await res.json();
+          return Array.isArray(data) ? data : [];
+        } catch {}
+      }
+      try { return JSON.parse(localStorage.getItem('bbm_products')) || []; } catch { return []; }
     }
 
-    function saveProducts() {
+    async function saveProducts() {
       localStorage.setItem('bbm_products', JSON.stringify(products));
+      if (USE_FIREBASE) {
+        try {
+          await fetch(`${FIREBASE_URL}/bbm_products.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(products)
+          });
+        } catch { showToast('⚠️ Could not sync to cloud — saved locally only', 'error'); }
+      }
     }
 
     // ── Navigation ──
@@ -315,7 +340,7 @@
     }
 
     // ── Save product (add or edit) ──
-    function saveProduct(e) {
+    async function saveProduct(e) {
       e.preventDefault();
       const id = document.getElementById('editId').value;
 
@@ -331,21 +356,18 @@
       };
 
       if (id) {
-        // Edit existing
         const idx = products.findIndex(p => p.id === parseInt(id));
         if (idx > -1) {
-          // Keep existing image if none uploaded
           if (!imageData) product.image = products[idx].image;
           products[idx] = product;
         }
         showToast('✅ Product updated!', 'success');
       } else {
-        // Add new
         products.push(product);
         showToast('🍪 Product added!', 'success');
       }
 
-      saveProducts();
+      await saveProducts();
       resetForm();
       showSection('products', null);
       // Update active sidebar link
@@ -384,11 +406,11 @@
     }
 
     // ── Toggle availability ──
-    function toggleAvailability(id) {
+    async function toggleAvailability(id) {
       const p = products.find(p => p.id === id);
       if (!p) return;
       p.available = !p.available;
-      saveProducts();
+      await saveProducts();
       renderProducts();
       showToast(p.available ? '✅ Product is now visible' : '⏸ Product is now hidden', 'success');
     }
@@ -404,9 +426,9 @@
       document.getElementById('deleteModal').classList.remove('open');
     }
 
-    function confirmDelete() {
+    async function confirmDelete() {
       products = products.filter(p => p.id !== deleteId);
-      saveProducts();
+      await saveProducts();
       closeModal();
       renderProducts();
       showToast('🗑️ Product deleted', 'success');
@@ -436,7 +458,7 @@
     });
 
     // ── Init ──
-    renderProducts();
+    loadProducts().then(data => { products = data; renderProducts(); });
   </script>
 
 </body>
