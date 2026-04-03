@@ -221,7 +221,7 @@
         try {
           const res  = await fetch(`${FIREBASE_URL}/bbm_products.json`);
           const data = await res.json();
-          return Array.isArray(data) ? data : [];
+          if (Array.isArray(data) && data.length) return data;
         } catch {}
       }
       try { return JSON.parse(localStorage.getItem('bbm_products')) || []; } catch { return []; }
