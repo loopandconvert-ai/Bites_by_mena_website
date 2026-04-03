@@ -224,7 +224,16 @@
           if (Array.isArray(data) && data.length) return data;
         } catch {}
       }
-      try { return JSON.parse(localStorage.getItem('bbm_products')) || []; } catch { return []; }
+      // Firebase empty — load from localStorage and immediately push to Firebase
+      const local = JSON.parse(localStorage.getItem('bbm_products')) || [];
+      if (local.length && USE_FIREBASE) {
+        fetch(`${FIREBASE_URL}/bbm_products.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(local)
+        }).catch(() => {});
+      }
+      return local;
     }
 
     async function saveProducts() {
